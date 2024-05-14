@@ -70,10 +70,10 @@ def index():
             return jsonify(tareas=gestor.mostrar_tareas())
     return jsonify(tareas=gestor.mostrar_tareas())
 
-@app.route('/completar/<int:posicion>')
+@app.route('/completar/<int:posicion>', methods=['POST'])
 def completar_tarea(posicion):
     gestor.marcar_completada(posicion)
-    return redirect('/')
+    return jsonify(tareas=gestor.mostrar_tareas())
 
 @app.route('/eliminar/<int:posicion>')
 def eliminar_tarea(posicion):
