@@ -5,10 +5,11 @@ app = Flask(__name__)
 CORS(app)
 
 class Tarea:
-    def __init__(self, descripcion, asignado=None, completada=False):
+    def __init__(self, descripcion, asignado=None, completada=False, prioridad=None):
         self.descripcion = descripcion
         self.asignado = asignado
         self.completada = completada
+        self.prioridad = prioridad.capitalize() if prioridad else None
 
     def __str__(self):
         estado = "Completada" if self.completada else "Pendiente"
@@ -18,9 +19,9 @@ class GestorTareas:
     def __init__(self):
         self.tareas = []
 
-    def agregar_tarea(self, descripcion, asignado=None):
+    def agregar_tarea(self, descripcion, asignado=None, prioridad=None):
         try:
-            tarea = Tarea(descripcion, asignado)
+            tarea = Tarea(descripcion, asignado, False, prioridad)
             self.tareas.append(tarea)
         except Exception as e:
             print(f"Error al agregar tarea: {e}")
@@ -38,6 +39,7 @@ class GestorTareas:
             tarea_dict = {
                 "descripcion": tarea.descripcion,
                 "asignado": tarea.asignado,
+                "prioridad": tarea.prioridad,
                 "completada": tarea.completada
             }
             tareas_dict.append(tarea_dict)
@@ -59,14 +61,16 @@ def index():
             data = request.get_json()
             descripcion = data.get('descripcion')
             asignado = data.get('asignado')
-            gestor.agregar_tarea(descripcion, asignado)
-            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado})")
+            prioridad = data.get('prioridad')
+            gestor.agregar_tarea(descripcion, asignado, prioridad)
+            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado}) (Prioridad: {prioridad})")
             return jsonify(tareas=gestor.mostrar_tareas())
         else:
             descripcion = request.form['descripcion']
             asignado = request.form.get('asignado')
-            gestor.agregar_tarea(descripcion, asignado)
-            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado})")
+            prioridad = request.form.get('prioridad')
+            gestor.agregar_tarea(descripcion, asignado, prioridad)
+            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado}) (Prioridad: {prioridad})")
             return jsonify(tareas=gestor.mostrar_tareas())
     return jsonify(tareas=gestor.mostrar_tareas())
 

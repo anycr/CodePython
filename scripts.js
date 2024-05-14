@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 celdaTitulo.textContent = 'Lista de Tareas';
                 celdaTitulo.style.textAlign = 'center'; // Alinear el texto al centro
                 celdaTitulo.style.padding = '10px'; // Relleno de la celda
-                celdaTitulo.setAttribute('colspan', '6'); // Colspan para abarcar todas las columnas
+                celdaTitulo.setAttribute('colspan', '5'); // Colspan para abarcar todas las columnas
                 filaTitulo.appendChild(celdaTitulo);
                 tablaTareas.appendChild(filaTitulo);
     
@@ -113,9 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 tablaTareas.appendChild(filaEncabezado);
     
-                // Agregar la tabla al contenedor de la lista de tareas
-                listaTareas.appendChild(tablaTareas);
-    
                 // Agregar las tareas recibidas del servidor
                 data.tareas.forEach((tarea, index) => {
                     // Crear fila para cada tarea
@@ -123,31 +120,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
     
                     // Añadir celdas con la descripción, asignado a, estado y prioridad de la tarea
-                    const celdaDescripcion = document.createElement('td');
-                    celdaDescripcion.textContent = tarea.descripcion;
-                    celdaDescripcion.style.border = '1px solid #ccc'; // Borde de las celdas
-                    celdaDescripcion.style.padding = '8px'; // Relleno de las celdas
-                    filaTarea.appendChild(celdaDescripcion);
+                    const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad];
+                    celdas.forEach(celda => {
+                        const td = document.createElement('td');
+                        td.textContent = celda;
+                        td.style.border = '1px solid #ccc'; // Borde de las celdas
+                        td.style.padding = '8px'; // Relleno de las celdas
+                        filaTarea.appendChild(td);
+                    });
     
-                    const celdaAsignado = document.createElement('td');
-                    celdaAsignado.textContent = tarea.asignado;
-                    celdaAsignado.style.border = '1px solid #ccc'; // Borde de las celdas
-                    celdaAsignado.style.padding = '8px'; // Relleno de las celdas
-                    filaTarea.appendChild(celdaAsignado);
-    
-                    const celdaEstado = document.createElement('td');
-                    celdaEstado.textContent = tarea.completada ? 'Completada' : 'Pendiente';
-                    celdaEstado.style.border = '1px solid #ccc'; // Borde de las celdas
-                    celdaEstado.style.padding = '8px'; // Relleno de las celdas
-                    filaTarea.appendChild(celdaEstado);
-    
-                    const celdaPrioridad = document.createElement('td');
-                    celdaPrioridad.textContent = tarea.prioridad;
-                    celdaPrioridad.style.border = '1px solid #ccc'; // Borde de las celdas
-                    celdaPrioridad.style.padding = '8px'; // Relleno de las celdas
-                    filaTarea.appendChild(celdaPrioridad);
-    
-                    // Agregar botones para completar y eliminar la tarea
+                    // Crear celda para los botones de acciones
                     const celdaAcciones = document.createElement('td');
                     celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
                     celdaAcciones.style.padding = '8px'; // Relleno de las celdas
@@ -159,10 +141,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         completarTarea(index);
                     });
                     celdaAcciones.appendChild(completarBtn);
-                    
-                     // Agregar espacio entre botones
-                            celdaAcciones.appendChild(document.createTextNode(' '));
-                    
+    
+                    // Agregar espacio entre botones
+                    celdaAcciones.appendChild(document.createTextNode(' '));
+    
                     // Agregar botón para eliminar tarea
                     const eliminarBtn = document.createElement('button');
                     eliminarBtn.textContent = 'Eliminar';
@@ -171,14 +153,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     celdaAcciones.appendChild(eliminarBtn);
     
+                    // Agregar la celda de acciones a la fila de tarea
                     filaTarea.appendChild(celdaAcciones);
     
                     // Agregar la fila a la tabla
                     tablaTareas.appendChild(filaTarea);
                 });
+    
+                // Agregar la tabla al contenedor de la lista de tareas
+                listaTareas.appendChild(tablaTareas);
             })
             .catch(error => console.error('Error al obtener las tareas:', error));
     }
+    
     
     
     // Llamar a la función para mostrar las tareas al cargar la página
