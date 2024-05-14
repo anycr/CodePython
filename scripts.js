@@ -2,22 +2,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const formTarea = document.getElementById('form-tarea');
     const inputDescripcion = document.getElementById('descripcion');
     const inputAsignado = document.getElementById('asignado');
+    const selectPrioridad = document.getElementById('prioridad');
     const listaTareas = document.getElementById('lista-tareas');
 
     formTarea.addEventListener('submit', function(event) {
         event.preventDefault();
         const descripcion = inputDescripcion.value;
         const asignado = inputAsignado.value;
+        const prioridad = selectPrioridad.value;
         if (descripcion.trim() !== '' && asignado.trim() !== '') {
-            agregarTarea(descripcion, asignado);
+            agregarTarea(descripcion, asignado, prioridad);
             inputDescripcion.value = '';
             inputAsignado.value = '';
         }
     });
-    function agregarTarea(descripcion, asignado) {
+
+    function agregarTarea(descripcion, asignado, prioridad) {
         var tarea = {
             descripcion: descripcion,
-            asignado: asignado
+            asignado: asignado,
+            prioridad: prioridad
         };
 
         fetch('http://127.0.0.1:5000/', {
@@ -93,32 +97,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 celdaTitulo.textContent = 'Lista de Tareas';
                 celdaTitulo.style.textAlign = 'center'; // Alinear el texto al centro
                 celdaTitulo.style.padding = '10px'; // Relleno de la celda
-                celdaTitulo.setAttribute('colspan', '4'); // Colspan para abarcar todas las columnas
+                celdaTitulo.setAttribute('colspan', '6'); // Colspan para abarcar todas las columnas
                 filaTitulo.appendChild(celdaTitulo);
                 tablaTareas.appendChild(filaTitulo);
     
                 // Crear fila de encabezado de la tabla
                 const filaEncabezado = document.createElement('tr');
-                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Acciones'];
+                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Acciones'];
                 encabezados.forEach(encabezado => {
                     const th = document.createElement('th');
                     th.textContent = encabezado;
-                    th.style.border = '1px solid #ccc'; // Borde de las celdas
-                    th.style.padding = '8px'; // Relleno de las celdas
+                    th.style.border = '1px solid #ccc'; // Borde de las celdas del encabezado
+                    th.style.padding = '8px'; // Relleno de las celdas del encabezado
                     filaEncabezado.appendChild(th);
                 });
                 tablaTareas.appendChild(filaEncabezado);
     
                 // Agregar la tabla al contenedor de la lista de tareas
                 listaTareas.appendChild(tablaTareas);
-                
+    
                 // Agregar las tareas recibidas del servidor
                 data.tareas.forEach((tarea, index) => {
                     // Crear fila para cada tarea
                     const filaTarea = document.createElement('tr');
                     filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
     
-                    // Añadir celdas con la descripción, asignado a y estado de la tarea
+                    // Añadir celdas con la descripción, asignado a, estado y prioridad de la tarea
                     const celdaDescripcion = document.createElement('td');
                     celdaDescripcion.textContent = tarea.descripcion;
                     celdaDescripcion.style.border = '1px solid #ccc'; // Borde de las celdas
@@ -137,6 +141,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     celdaEstado.style.padding = '8px'; // Relleno de las celdas
                     filaTarea.appendChild(celdaEstado);
     
+                    const celdaPrioridad = document.createElement('td');
+                    celdaPrioridad.textContent = tarea.prioridad;
+                    celdaPrioridad.style.border = '1px solid #ccc'; // Borde de las celdas
+                    celdaPrioridad.style.padding = '8px'; // Relleno de las celdas
+                    filaTarea.appendChild(celdaPrioridad);
+    
                     // Agregar botones para completar y eliminar la tarea
                     const celdaAcciones = document.createElement('td');
                     celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
@@ -149,10 +159,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         completarTarea(index);
                     });
                     celdaAcciones.appendChild(completarBtn);
-    
-                    // Agregar espacio entre botones
-                        celdaAcciones.appendChild(document.createTextNode(' '));
-                        
+                    
+                     // Agregar espacio entre botones
+                            celdaAcciones.appendChild(document.createTextNode(' '));
+                    
                     // Agregar botón para eliminar tarea
                     const eliminarBtn = document.createElement('button');
                     eliminarBtn.textContent = 'Eliminar';
@@ -169,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error al obtener las tareas:', error));
     }
+    
     
     // Llamar a la función para mostrar las tareas al cargar la página
     actualizarListaTareas();
