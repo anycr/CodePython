@@ -81,38 +81,94 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Limpiar lista de tareas antes de agregar las actualizadas
                 listaTareas.innerHTML = '';
+    
+                // Crear tabla para mostrar las tareas
+                const tablaTareas = document.createElement('table');
+                tablaTareas.style.borderCollapse = 'collapse'; // Estilo para colapsar los bordes de la tabla
+                tablaTareas.style.border = '1px solid #ccc'; // Borde de la tabla
+    
+                // Crear fila para el título "Lista de Tareas"
+                const filaTitulo = document.createElement('tr');
+                const celdaTitulo = document.createElement('th');
+                celdaTitulo.textContent = 'Lista de Tareas';
+                celdaTitulo.style.textAlign = 'center'; // Alinear el texto al centro
+                celdaTitulo.style.padding = '10px'; // Relleno de la celda
+                celdaTitulo.setAttribute('colspan', '4'); // Colspan para abarcar todas las columnas
+                filaTitulo.appendChild(celdaTitulo);
+                tablaTareas.appendChild(filaTitulo);
+    
+                // Crear fila de encabezado de la tabla
+                const filaEncabezado = document.createElement('tr');
+                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Acciones'];
+                encabezados.forEach(encabezado => {
+                    const th = document.createElement('th');
+                    th.textContent = encabezado;
+                    th.style.border = '1px solid #ccc'; // Borde de las celdas
+                    th.style.padding = '8px'; // Relleno de las celdas
+                    filaEncabezado.appendChild(th);
+                });
+                tablaTareas.appendChild(filaEncabezado);
+    
+                // Agregar la tabla al contenedor de la lista de tareas
+                listaTareas.appendChild(tablaTareas);
+                
                 // Agregar las tareas recibidas del servidor
                 data.tareas.forEach((tarea, index) => {
-                    const nuevaTarea = document.createElement('li');
-                    nuevaTarea.textContent = tarea.descripcion + ' - Asignado a: ' + tarea.asignado + ' - ' + (tarea.completada ? 'Completada ' : 'Pendiente ');
+                    // Crear fila para cada tarea
+                    const filaTarea = document.createElement('tr');
+                    filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
+    
+                    // Añadir celdas con la descripción, asignado a y estado de la tarea
+                    const celdaDescripcion = document.createElement('td');
+                    celdaDescripcion.textContent = tarea.descripcion;
+                    celdaDescripcion.style.border = '1px solid #ccc'; // Borde de las celdas
+                    celdaDescripcion.style.padding = '8px'; // Relleno de las celdas
+                    filaTarea.appendChild(celdaDescripcion);
+    
+                    const celdaAsignado = document.createElement('td');
+                    celdaAsignado.textContent = tarea.asignado;
+                    celdaAsignado.style.border = '1px solid #ccc'; // Borde de las celdas
+                    celdaAsignado.style.padding = '8px'; // Relleno de las celdas
+                    filaTarea.appendChild(celdaAsignado);
+    
+                    const celdaEstado = document.createElement('td');
+                    celdaEstado.textContent = tarea.completada ? 'Completada' : 'Pendiente';
+                    celdaEstado.style.border = '1px solid #ccc'; // Borde de las celdas
+                    celdaEstado.style.padding = '8px'; // Relleno de las celdas
+                    filaTarea.appendChild(celdaEstado);
+    
+                    // Agregar botones para completar y eliminar la tarea
+                    const celdaAcciones = document.createElement('td');
+                    celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
+                    celdaAcciones.style.padding = '8px'; // Relleno de las celdas
     
                     // Agregar botón para marcar tarea como completada
                     const completarBtn = document.createElement('button');
                     completarBtn.textContent = 'Completar';
-                    completarBtn.className = 'btn-completar'; // Agregamos una clase para estilizar el botón
                     completarBtn.addEventListener('click', function() {
                         completarTarea(index);
                     });
-                    nuevaTarea.appendChild(completarBtn);
+                    celdaAcciones.appendChild(completarBtn);
     
                     // Agregar espacio entre botones
-                    nuevaTarea.appendChild(document.createTextNode(' '));
-    
+                        celdaAcciones.appendChild(document.createTextNode(' '));
+                        
                     // Agregar botón para eliminar tarea
                     const eliminarBtn = document.createElement('button');
                     eliminarBtn.textContent = 'Eliminar';
-                    eliminarBtn.className = 'btn-eliminar'; // Agregamos una clase para estilizar el botón
                     eliminarBtn.addEventListener('click', function() {
                         eliminarTarea(index);
                     });
-                    nuevaTarea.appendChild(eliminarBtn);
+                    celdaAcciones.appendChild(eliminarBtn);
     
-                    listaTareas.appendChild(nuevaTarea);
+                    filaTarea.appendChild(celdaAcciones);
+    
+                    // Agregar la fila a la tabla
+                    tablaTareas.appendChild(filaTarea);
                 });
             })
             .catch(error => console.error('Error al obtener las tareas:', error));
     }
-    
     
     // Llamar a la función para mostrar las tareas al cargar la página
     actualizarListaTareas();
