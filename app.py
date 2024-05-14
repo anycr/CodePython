@@ -51,6 +51,12 @@ class GestorTareas:
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
 
+    def cambiar_prioridad(self, posicion, nueva_prioridad):
+        try:
+            tarea = self.tareas[posicion]
+            tarea.prioridad = nueva_prioridad
+        except IndexError:
+            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
 
 gestor = GestorTareas()
 
@@ -83,6 +89,16 @@ def completar_tarea(posicion):
 def eliminar_tarea(posicion):
     gestor.eliminar_tarea(posicion)
     return redirect('/')
+
+@app.route('/cambiar_prioridad/<int:posicion>', methods=['POST'])
+def cambiar_prioridad(posicion):
+    if request.is_json:
+        data = request.get_json()
+        nueva_prioridad = data.get('prioridad')
+        gestor.cambiar_prioridad(posicion, nueva_prioridad)
+        return jsonify(tareas=gestor.mostrar_tareas())
+    return 'Solicitud no válida', 400
+
 
 @app.errorhandler(Exception)
 def handle_error(error):

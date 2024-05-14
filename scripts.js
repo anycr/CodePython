@@ -78,6 +78,24 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error al eliminar la tarea:', error));
     } 
+
+    function cambiarPrioridad(index) {
+        const nuevaPrioridad = prompt('Ingrese la nueva prioridad:');
+        if (nuevaPrioridad !== null) {
+            fetch(`http://127.0.0.1:5000/cambiar_prioridad/${index}`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prioridad: nuevaPrioridad })
+            })
+            .then(response => response.json())
+            .then(actualizarListaTareas)
+            .catch(error => console.error('Error al cambiar prioridad:', error));
+        }
+    }
+    
     
     function actualizarListaTareas() {
         fetch('http://127.0.0.1:5000/')
@@ -152,6 +170,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         eliminarTarea(index);
                     });
                     celdaAcciones.appendChild(eliminarBtn);
+
+                    // Agregar espacio entre botones
+                    celdaAcciones.appendChild(document.createTextNode(' '));
+
+                    // Crear botón para cambiar prioridad
+                    const cambiarPrioridadBtn = document.createElement('button');
+                    cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
+                    cambiarPrioridadBtn.addEventListener('click', function() {
+                        cambiarPrioridad(index);
+                    });
+                    celdaAcciones.appendChild(cambiarPrioridadBtn);
     
                     // Agregar la celda de acciones a la fila de tarea
                     filaTarea.appendChild(celdaAcciones);
@@ -165,8 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => console.error('Error al obtener las tareas:', error));
     }
-    
-    
     
     // Llamar a la función para mostrar las tareas al cargar la página
     actualizarListaTareas();
