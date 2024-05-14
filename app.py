@@ -1,65 +1,89 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, request, redirect, jsonify
+from flask_cors import CORS
 
-app = Flask(__name__)  # Se crea una instancia de Flask
+app = Flask(__name__)
+CORS(app)
 
 class Tarea:
-    def __init__(self, descripcion, completada=False):
-        # Constructor de la clase Tarea
-        self.descripcion = descripcion  # Se establece la descripción de la tarea
-        self.completada = completada    # Se establece el estado de completado de la tarea, por defecto False
+    def __init__(self, descripcion, asignado=None, completada=False):
+        self.descripcion = descripcion
+        self.asignado = asignado
+        self.completada = completada
 
     def __str__(self):
-        # Método para representar la tarea como una cadena de texto
-        estado = "Completada" if self.completada else "Pendiente"  # Determina el estado de la tarea
-        return f"{self.descripcion} - {estado}"  # Retorna la descripción de la tarea y su estado
+        estado = "Completada" if self.completada else "Pendiente"
+        return f"{self.descripcion} - {estado}"
 
 class GestorTareas:
     def __init__(self):
-        self.tareas = []  # Se inicializa una lista para almacenar las tareas
+        self.tareas = []
 
-    def agregar_tarea(self, descripcion):
-        # Método para agregar una nueva tarea
-        tarea = Tarea(descripcion)  # Crea una nueva instancia de la clase Tarea
-        self.tareas.append(tarea)   # Agrega la tarea a la lista de tareas
+    def agregar_tarea(self, descripcion, asignado=None):
+        try:
+            tarea = Tarea(descripcion, asignado)
+            self.tareas.append(tarea)
+        except Exception as e:
+            print(f"Error al agregar tarea: {e}")
 
     def marcar_completada(self, posicion):
-        # Método para marcar una tarea como completada
         try:
-            tarea = self.tareas[posicion]  # Obtiene la tarea en la posición indicada
-            tarea.completada = True         # Marca la tarea como completada
+            tarea = self.tareas[posicion]
+            tarea.completada = True
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")  
 
     def mostrar_tareas(self):
-        # Método para mostrar todas las tareas
-        if not self.tareas:  # Si no hay tareas en la lista
-            print("No hay ninguna tarea.")
-        else:
-            for i, tarea in enumerate(self.tareas):
-                print(f"{i}: {tarea}")  # Imprime la posición y la descripción de cada tarea
+        tareas_dict = []
+        for tarea in self.tareas:
+            tarea_dict = {
+                "descripcion": tarea.descripcion,
+                "asignado": tarea.asignado,
+                "completada": tarea.completada
+            }
+            tareas_dict.append(tarea_dict)
+        return tareas_dict
 
     def eliminar_tarea(self, posicion):
-        # Método para eliminar una tarea
         try:
-            del self.tareas[posicion]  # Elimina la tarea en la posición indicada
+            del self.tareas[posicion]
         except IndexError:
-            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")  
+            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
 
-gestor = GestorTareas()  # Se crea una instancia de la clase GestorTareas
+
+gestor = GestorTareas()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        descripcion = request.form['descripcion']  # Se obtiene la descripción de la nueva tarea desde el formulario
-        gestor.agregar_tarea(descripcion)  # Se agrega una nueva tarea al gestor de tareas
-    return render_template('index.html', tareas=gestor.mostrar_tareas())  # Se renderiza la plantilla index.html con las tareas
+        if request.is_json:
+            data = request.get_json()
+            descripcion = data.get('descripcion')
+            asignado = data.get('asignado')
+            gestor.agregar_tarea(descripcion, asignado)
+            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado})")
+            return jsonify(tareas=gestor.mostrar_tareas())
+        else:
+            descripcion = request.form['descripcion']
+            asignado = request.form.get('asignado')
+            gestor.agregar_tarea(descripcion, asignado)
+            print(f"Tarea agregada: {descripcion} (Asignado a: {asignado})")
+            return jsonify(tareas=gestor.mostrar_tareas())
+    return jsonify(tareas=gestor.mostrar_tareas())
 
 @app.route('/completar/<int:posicion>')
 def completar_tarea(posicion):
-    gestor.marcar_completada(posicion)  # Se marca la tarea en la posición especificada como completada
-    return redirect(url_for('index'))  # Se redirige a la página principal
+    gestor.marcar_completada(posicion)
+    return redirect('/')
 
 @app.route('/eliminar/<int:posicion>')
 def eliminar_tarea(posicion):
-    gestor.eliminar_tarea(posicion)  # Se elimina la tarea en la posición especificada
-    return redirect(url_for('index'))  # Se redirige a la página principal
+    gestor.eliminar_tarea(posicion)
+    return redirect('/')
+
+@app.errorhandler(Exception)
+def handle_error(error):
+    print('Se produjo un error en el servidor:', error)
+    return 'Se produjo un error en el servidor', 500
+
+if __name__ == "__main__":
+    app.run(debug=True)

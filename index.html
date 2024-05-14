@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas de Mantenimiento</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Gestor de Tareas de Mantenimiento</h1>
+    
+    <!-- Formulario para agregar una nueva tarea -->
+    <form id="form-tarea" enctype="application/json">
+        <input type="text" id="descripcion" placeholder="Descripción de la tarea" required>
+        <input type="text" id="asignado" placeholder="Asignado a" required>
+        <button type="submit">Agregar Tarea</button>
+    </form>
+
+    <!-- Lista de tareas -->
+    <ul id="lista-tareas">
+        <!-- Aquí se agregarán dinámicamente las tareas -->
+    </ul>
+
+    <!-- Archivo JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html>
