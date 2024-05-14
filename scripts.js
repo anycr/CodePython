@@ -89,14 +89,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Agregar botón para marcar tarea como completada
                     const completarBtn = document.createElement('button');
                     completarBtn.textContent = 'Completar';
+                    completarBtn.className = 'btn-completar'; // Agregamos una clase para estilizar el botón
                     completarBtn.addEventListener('click', function() {
                         completarTarea(index);
                     });
                     nuevaTarea.appendChild(completarBtn);
     
+                    // Agregar espacio entre botones
+                    nuevaTarea.appendChild(document.createTextNode(' '));
+    
                     // Agregar botón para eliminar tarea
                     const eliminarBtn = document.createElement('button');
                     eliminarBtn.textContent = 'Eliminar';
+                    eliminarBtn.className = 'btn-eliminar'; // Agregamos una clase para estilizar el botón
                     eliminarBtn.addEventListener('click', function() {
                         eliminarTarea(index);
                     });
@@ -106,7 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             })
             .catch(error => console.error('Error al obtener las tareas:', error));
-    }   
+    }
+    
     
     // Llamar a la función para mostrar las tareas al cargar la página
     actualizarListaTareas();
