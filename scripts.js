@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } 
 
     function cambiarPrioridad(index) {
-        const nuevaPrioridad = prompt('Ingrese la nueva prioridad:');
+        const nuevaPrioridad = prompt('Ingrese la nueva prioridad (Alta, Normal, Baja):');
          {
             fetch(`http://127.0.0.1:5000/cambiar_prioridad/${index}`, {
                 method: 'POST',
