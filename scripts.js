@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputDescripcion = document.getElementById('descripcion');
     const inputAsignado = document.getElementById('asignado');
     const selectPrioridad = document.getElementById('prioridad');
+    const inputTipoArea = document.getElementById('tipo_area');
+    const inputLugar = document.getElementById('lugar');
+    const inputFechaVencimiento = document.getElementById('fecha_vencimiento');
     const listaTareas = document.getElementById('lista-tareas');
 
     formTarea.addEventListener('submit', function(event) {
@@ -10,18 +13,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const descripcion = inputDescripcion.value;
         const asignado = inputAsignado.value;
         const prioridad = selectPrioridad.value;
+        const tipo_area = inputTipoArea.value;
+        const lugar = inputLugar.value;
+        const fecha_vencimiento = inputFechaVencimiento.value;
         if (descripcion.trim() !== '' && asignado.trim() !== '') {
-            agregarTarea(descripcion, asignado, prioridad);
+            agregarTarea(descripcion, asignado, prioridad, tipo_area, lugar, fecha_vencimiento);
             inputDescripcion.value = '';
             inputAsignado.value = '';
+            inputTipoArea.value = '';
+            inputLugar.value = '';
+            inputFechaVencimiento.value = '';
         }
     });
 
-    function agregarTarea(descripcion, asignado, prioridad) {
+    function agregarTarea(descripcion, asignado, prioridad, tipo_area, lugar, fecha_vencimiento) {
         var tarea = {
             descripcion: descripcion,
             asignado: asignado,
-            prioridad: prioridad
+            prioridad: prioridad,
+            tipo_area: tipo_area,
+            lugar: lugar,
+            fecha_vencimiento: fecha_vencimiento
         };
 
         fetch('http://127.0.0.1:5000/', {
@@ -81,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function cambiarPrioridad(index) {
         const nuevaPrioridad = prompt('Ingrese la nueva prioridad:');
-        if (nuevaPrioridad !== null) {
+         {
             fetch(`http://127.0.0.1:5000/cambiar_prioridad/${index}`, {
                 method: 'POST',
                 headers: {
@@ -121,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 // Crear fila de encabezado de la tabla
                 const filaEncabezado = document.createElement('tr');
-                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Acciones'];
+                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Tipo de Área', 'Lugar', 'Fecha de Vencimiento', 'Fecha de Creación', 'Acciones'];
                 encabezados.forEach(encabezado => {
                     const th = document.createElement('th');
                     th.textContent = encabezado;
@@ -137,8 +149,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const filaTarea = document.createElement('tr');
                     filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
     
-                    // Añadir celdas con la descripción, asignado a, estado y prioridad de la tarea
-                    const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad];
+                    // Añadir celdas con los datos de la tarea
+                    const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
                     celdas.forEach(celda => {
                         const td = document.createElement('td');
                         td.textContent = celda;
