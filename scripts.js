@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const inputAsignado = document.getElementById('asignado');
     const selectPrioridad = document.getElementById('prioridad');
     const inputTipoArea = document.getElementById('tipo_area');
-    const inputLugar = document.getElementById('lugar');
+    const lugarContainer = document.getElementById('lugar-container'); // Contenedor del select
     const inputFechaVencimiento = document.getElementById('fecha_vencimiento');
     const listaTareas = document.getElementById('lista-tareas');
 
@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const asignado = inputAsignado.value;
         const prioridad = selectPrioridad.value;
         const tipo_area = inputTipoArea.value;
-        const lugar = inputLugar.value;
+        const lugar = document.getElementById('lugar').value; // Actualizado para obtener el valor del select generado dinámicamente
         const fecha_vencimiento = inputFechaVencimiento.value;
         if (descripcion.trim() !== '' && asignado.trim() !== '') {
             agregarTarea(descripcion, asignado, prioridad, tipo_area, lugar, fecha_vencimiento);
             inputDescripcion.value = '';
             inputAsignado.value = '';
             inputTipoArea.value = '';
-            inputLugar.value = '';
+            lugarContainer.innerHTML = ''; // Limpiar el contenedor del lugar
             inputFechaVencimiento.value = '';
         }
     });
@@ -209,4 +209,60 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Llamar a la función para mostrar las tareas al cargar la página
     actualizarListaTareas();
+
+    // Función para crear y mostrar la lista de selección de lugares
+    function mostrarListaSeleccion(opciones) {
+        // Limpiamos el contenedor
+        lugarContainer.innerHTML = '';
+
+        // Creamos el elemento select
+        const selectLugar = document.createElement('select');
+        selectLugar.id = 'lugar';
+        selectLugar.name = 'lugar';
+
+        // Añadimos las opciones al select
+        opciones.forEach(opcion => {
+            const option = document.createElement('option');
+            option.value = opcion.value;
+            option.textContent = opcion.text;
+            selectLugar.appendChild(option);
+        });
+
+        // Añadimos el select al contenedor
+        lugarContainer.appendChild(selectLugar);
+    }
+
+    // Evento de cambio en el campo "Tipo de Área"
+    inputTipoArea.addEventListener('change', function() {
+        const tipoAreaSeleccionado = inputTipoArea.value;
+        let opcionesLugar = [];
+
+        if (tipoAreaSeleccionado === 'Habitaciones') {
+            // Si se selecciona "Habitaciones", generamos opciones numeradas del 001 al 100
+            for (let i = 1; i <= 100; i++) {
+                const numero = i.toString().padStart(3, '0');
+                opcionesLugar.push({ value: numero, text: numero });
+            }
+        } else if (tipoAreaSeleccionado === 'Espacios') {
+            // Si se selecciona "Espacios", definimos las opciones de lugares
+            opcionesLugar = [
+                { value: 'Vestíbulo/Recepción', text: 'Vestíbulo/Recepción' },
+                { value: 'Piscina', text: 'Piscina' },
+                { value: 'Gimnasio', text: 'Gimnasio' },
+                { value: 'Restaurante', text: 'Restaurante' },
+                { value: 'Bar', text: 'Bar' },
+                { value: 'Spa', text: 'Spa' },
+                { value: 'Salas_de_reuniones', text: 'Salas de reuniones' },
+                { value: 'Aseos', text: 'Baños' }
+                // Puedes agregar más opciones según sea necesario
+            ];
+        }
+
+        // Mostramos la lista de selección con las opciones correspondientes
+        mostrarListaSeleccion(opcionesLugar);
+    });
+
+    // Llamamos al evento de cambio una vez al cargar la página para asegurarnos de que se muestre la lista de selección inicialmente
+    inputTipoArea.dispatchEvent(new Event('change'));
+
 });

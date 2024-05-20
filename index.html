@@ -22,19 +22,22 @@
             <option value="alta">Alta</option>
             <option value="normal" selected>Normal</option>
             <option value="baja">Baja</option>
-        </select>
+        </select><br><br>
 
         <label for="tipo_area">Tipo de Área:</label>
-        <select id="tipo_area" name="tipo_area">
-            <option value="habitaciones">Habitaciones</option>
-            <option value="espacios">Espacios</option>
-        </select>
+        <select id="tipo_area" name="tipo_area" required>
+            <option value="">Seleccionar...</option>
+            <option value="Habitaciones">Habitaciones</option>
+            <option value="Espacios">Espacios</option>
+        </select><br><br>
 
-        <label for="lugar">Lugar:</label>
-        <input type="text" id="lugar" placeholder="Espacios del hotel" name="lugar">
+        <label for="lugar" required>Lugar:</label>
+        <div id="lugar-container">
+            <!-- Aquí se generará el select dinámicamente -->
+        </div><br>
 
         <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
-        <input type="datetime-local" id="fecha_vencimiento" name="fecha_vencimiento">
+        <input type="datetime-local" id="fecha_vencimiento" name="fecha_vencimiento" required>
 
         <button type="submit">Agregar Tarea</button>
     </form>
