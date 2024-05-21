@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, jsonify
 from flask_cors import CORS
 import datetime
+import pytz
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +12,7 @@ class Tarea:
         self.asignado = asignado
         self.completada = completada
         self.prioridad = prioridad.capitalize() if prioridad else None
-        self.fecha_creacion = datetime.datetime.now(datetime.timezone.utc)  # Fecha y hora de creación con zona horaria UTC
+        self.fecha_creacion = self.get_current_time_in_spain()  # Fecha y hora de creación con zona horaria UTC
         self.fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
         self.tipo_area = tipo_area
         self.lugar = lugar   
@@ -21,17 +22,23 @@ class Tarea:
     def __str__(self):
         estado = "Completada" if self.completada else "Pendiente"
         return f"{self.descripcion} - {estado}"
+    
+    def get_current_time_in_spain(self):
+        tz_spain = pytz.timezone('Europe/Madrid')
+        return datetime.datetime.now(tz_spain)
    
     def parse_fecha_vencimiento(self, fecha_vencimiento):
         if not fecha_vencimiento:
             return None
         formatos = ["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%d %H:%M:%S"]
+        tz_spain = pytz.timezone('Europe/Madrid')
         for formato in formatos:
             try:
                 if formato == "%Y-%m-%dT%H:%M:%S.%fZ":
                     fecha_v = datetime.datetime.fromisoformat(fecha_vencimiento.replace('Z', '+00:00'))
                 else:
                     fecha_v = datetime.datetime.strptime(fecha_vencimiento, formato).replace(tzinfo=datetime.timezone.utc)
+                fecha_v = fecha_v.astimezone(tz_spain)  # Convertir a la zona horaria de España
                 if fecha_v < self.fecha_creacion:
                     raise ValueError("La fecha de vencimiento no puede ser anterior a la fecha de creación")
                 return fecha_v
@@ -78,8 +85,8 @@ class GestorTareas:
                 "asignado": tarea.asignado,
                 "prioridad": tarea.prioridad,
                 "completada": tarea.completada,
-                "fecha_creacion": tarea.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S"),
-                "fecha_vencimiento": tarea.fecha_vencimiento.strftime("%Y-%m-%d %H:%M:%S") if tarea.fecha_vencimiento else None,
+                "fecha_creacion": tarea.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S %Z%z"),
+                "fecha_vencimiento": tarea.fecha_vencimiento.strftime("%Y-%m-%d %H:%M:%S %Z%z") if tarea.fecha_vencimiento else None,
                 "tipo_area": tarea.tipo_area,
                 "lugar": tarea.lugar
             }
