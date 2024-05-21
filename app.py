@@ -11,27 +11,41 @@ class Tarea:
         self.asignado = asignado
         self.completada = completada
         self.prioridad = prioridad.capitalize() if prioridad else None
-        self.fecha_creacion = datetime.datetime.now()  # Fecha y hora de creación
+        self.fecha_creacion = datetime.datetime.now(datetime.timezone.utc)  # Fecha y hora de creación con zona horaria UTC
         self.fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
         self.tipo_area = tipo_area
         self.lugar = lugar   
         self.tipo_area = tipo_area
         self.lugar = lugar
 
-
     def __str__(self):
         estado = "Completada" if self.completada else "Pendiente"
         return f"{self.descripcion} - {estado}"
    
     def parse_fecha_vencimiento(self, fecha_vencimiento):
-        formatos = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M:%S"]
+        if not fecha_vencimiento:
+            return None
+        formatos = ["%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%d %H:%M:%S"]
         for formato in formatos:
             try:
-                return datetime.datetime.strptime(fecha_vencimiento, formato)
-            except ValueError:
+                if formato == "%Y-%m-%dT%H:%M:%S.%fZ":
+                    fecha_v = datetime.datetime.fromisoformat(fecha_vencimiento.replace('Z', '+00:00'))
+                else:
+                    fecha_v = datetime.datetime.strptime(fecha_vencimiento, formato).replace(tzinfo=datetime.timezone.utc)
+                if fecha_v < self.fecha_creacion:
+                    raise ValueError("La fecha de vencimiento no puede ser anterior a la fecha de creación")
+                return fecha_v
+            except ValueError as e:
+                print(f"Error al parsear fecha_vencimiento: {e}")
                 continue
-        print(f"Error al parsear fecha_vencimiento: {fecha_vencimiento}")
         return None
+    
+    def establecer_vencimiento(self, fecha_vencimiento):
+        nueva_fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
+        if nueva_fecha_vencimiento:
+            self.fecha_vencimiento = nueva_fecha_vencimiento
+        else:
+            raise ValueError("Fecha de vencimiento inválida")
     
 class GestorTareas:
     def __init__(self):
@@ -91,6 +105,8 @@ class GestorTareas:
             tarea.establecer_vencimiento(fecha_vencimiento)
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
+        except ValueError as e:
+            print(e)
 
 gestor = GestorTareas()
 
@@ -145,9 +161,13 @@ def establecer_vencimiento(posicion):
     if request.is_json:
         data = request.get_json()
         fecha_vencimiento = data.get('fecha_vencimiento')
-        gestor.establecer_vencimiento(posicion, fecha_vencimiento)
+        try:
+            gestor.establecer_vencimiento(posicion, fecha_vencimiento)
+        except ValueError as e:
+            return str(e), 400
         return jsonify(tareas=gestor.mostrar_tareas())
     return 'Solicitud no válida', 400
+
 
 @app.errorhandler(Exception)
 def handle_error(error):

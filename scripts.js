@@ -7,15 +7,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const lugarContainer = document.getElementById('lugar-container'); // Contenedor del select
     const inputFechaVencimiento = document.getElementById('fecha_vencimiento');
     const listaTareas = document.getElementById('lista-tareas');
+    const mensajeError = document.createElement('div'); // Elemento para mostrar errores
+    mensajeError.style.color = 'red';
+    mensajeError.style.marginTop = '10px';
+    formTarea.appendChild(mensajeError);
 
     formTarea.addEventListener('submit', function(event) {
         event.preventDefault();
+        mensajeError.textContent = ''; // Limpiar mensaje de error
+
         const descripcion = inputDescripcion.value;
         const asignado = inputAsignado.value;
         const prioridad = selectPrioridad.value;
         const tipo_area = inputTipoArea.value;
         const lugar = document.getElementById('lugar').value; // Actualizado para obtener el valor del select generado dinámicamente
-        const fecha_vencimiento = inputFechaVencimiento.value;
+        const fecha_vencimiento = new Date(inputFechaVencimiento.value);
+        const fecha_creacion = new Date(); // Fecha actual
+
+        // Validar que la fecha de vencimiento no sea anterior a la fecha de creación
+        if (fecha_vencimiento < fecha_creacion) {
+            mensajeError.textContent = 'La fecha de vencimiento no puede ser anterior a la fecha de creación.';
+            return;
+        }
+
         if (descripcion.trim() !== '' && asignado.trim() !== '') {
             agregarTarea(descripcion, asignado, prioridad, tipo_area, lugar, fecha_vencimiento);
             inputDescripcion.value = '';
@@ -208,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
             cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
             celdaAcciones.appendChild(cambiarPrioridadBtn);
-            
+
             // Agregar espacio entre botones
             celdaAcciones.appendChild(document.createTextNode(' '));
         }
