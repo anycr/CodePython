@@ -38,5 +38,5 @@ li {
 
 .completed {
     text-decoration: line-through;
-    color: #888;
+    color: gray;
 }

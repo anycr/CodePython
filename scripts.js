@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 celdaTitulo.textContent = 'Lista de Tareas';
                 celdaTitulo.style.textAlign = 'center'; // Alinear el texto al centro
                 celdaTitulo.style.padding = '10px'; // Relleno de la celda
-                celdaTitulo.setAttribute('colspan', '5'); // Colspan para abarcar todas las columnas
+                celdaTitulo.setAttribute('colspan', '9'); // Colspan para abarcar todas las columnas
                 filaTitulo.appendChild(celdaTitulo);
                 tablaTareas.appendChild(filaTitulo);
     
@@ -165,11 +165,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     celdaAcciones.style.padding = '8px'; // Relleno de las celdas
     
                     // Agregar botón para marcar tarea como completada
-                    const completarBtn = document.createElement('button');
-                    completarBtn.textContent = 'Completar';
-                    completarBtn.onclick = () => completarTarea(index);
-                    completarBtn.style.marginRight = '5px'; // Espacio entre botones
-                    celdaAcciones.appendChild(completarBtn);
+                    if (!tarea.completada) {
+                        const completarBtn = document.createElement('button');
+                        completarBtn.textContent = 'Completar';
+                        completarBtn.onclick = () => completarTarea(index);
+                        completarBtn.style.marginRight = '5px'; // Espacio entre botones
+                        celdaAcciones.appendChild(completarBtn);
+                    }
     
                     // Agregar botón para eliminar la tarea
                     const eliminarBtn = document.createElement('button');
@@ -254,5 +256,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Llamamos al evento de cambio una vez al cargar la página para asegurarnos de que se muestre la lista de selección inicialmente
     inputTipoArea.dispatchEvent(new Event('change'));
+
+    data.tareas.forEach((tarea, index) => {
+        // Crear fila para cada tarea
+        const filaTarea = document.createElement('tr');
+        filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
+        
+        if (tarea.completada) {
+            filaTarea.classList.add('completed'); // Agregar clase si la tarea está completada
+        }
+    
+        // Añadir celdas con los datos de la tarea
+        const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
+        celdas.forEach(celda => {
+            const td = document.createElement('td');
+            td.textContent = celda;
+            td.style.border = '1px solid #ccc'; // Borde de las celdas
+            td.style.padding = '8px'; // Relleno de las celdas
+            filaTarea.appendChild(td);
+        });
+    
+        // Crear celda para los botones de acciones
+        const celdaAcciones = document.createElement('td');
+        celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
+        celdaAcciones.style.padding = '8px'; // Relleno de las celdas
+    
+        // Agregar botón para marcar tarea como completada
+        if (!tarea.completada) {
+            const completarBtn = document.createElement('button');
+            completarBtn.textContent = 'Completar';
+            completarBtn.onclick = () => completarTarea(index);
+            completarBtn.style.marginRight = '5px'; // Espacio entre botones
+            celdaAcciones.appendChild(completarBtn);
+        }
+    
+        // Agregar botón para eliminar la tarea
+        const eliminarBtn = document.createElement('button');
+        eliminarBtn.textContent = 'Eliminar';
+        eliminarBtn.onclick = () => eliminarTarea(index);
+        eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
+        celdaAcciones.appendChild(eliminarBtn);
+    
+        // Agregar botón para cambiar la prioridad de la tarea
+        const cambiarPrioridadBtn = document.createElement('button');
+        cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
+        cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
+        celdaAcciones.appendChild(cambiarPrioridadBtn);
+    
+        // Añadir celda de acciones a la fila de la tarea
+        filaTarea.appendChild(celdaAcciones);
+    
+        // Añadir la fila de la tarea a la tabla
+        tablaTareas.appendChild(filaTarea);
+    });
 
 });
