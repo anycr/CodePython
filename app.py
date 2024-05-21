@@ -51,7 +51,12 @@ class GestorTareas:
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")  
 
+    def ordenar_por_prioridad(self):
+        prioridad_orden = {'Alta': 1, 'Normal': 2, 'Baja': 3}
+        self.tareas.sort(key=lambda tarea: prioridad_orden.get(tarea.prioridad, 4))
+
     def mostrar_tareas(self):
+        self.ordenar_por_prioridad()  # Ordenar las tareas antes de mostrarlas
         tareas_dict = []
         for tarea in self.tareas:
             tarea_dict = {

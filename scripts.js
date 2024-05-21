@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function cambiarPrioridad(index) {
         const nuevaPrioridad = prompt('Ingrese la nueva prioridad (Alta, Normal, Baja):');
-         {
+        if (nuevaPrioridad) {
             fetch(`http://127.0.0.1:5000/cambiar_prioridad/${index}`, {
                 method: 'POST',
                 headers: {
@@ -167,44 +167,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Agregar botón para marcar tarea como completada
                     const completarBtn = document.createElement('button');
                     completarBtn.textContent = 'Completar';
-                    completarBtn.addEventListener('click', function() {
-                        completarTarea(index);
-                    });
+                    completarBtn.onclick = () => completarTarea(index);
+                    completarBtn.style.marginRight = '5px'; // Espacio entre botones
                     celdaAcciones.appendChild(completarBtn);
     
-                    // Agregar espacio entre botones
-                    celdaAcciones.appendChild(document.createTextNode(' '));
-    
-                    // Agregar botón para eliminar tarea
+                    // Agregar botón para eliminar la tarea
                     const eliminarBtn = document.createElement('button');
                     eliminarBtn.textContent = 'Eliminar';
-                    eliminarBtn.addEventListener('click', function() {
-                        eliminarTarea(index);
-                    });
+                    eliminarBtn.onclick = () => eliminarTarea(index);
+                    eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
                     celdaAcciones.appendChild(eliminarBtn);
-
-                    // Agregar espacio entre botones
-                    celdaAcciones.appendChild(document.createTextNode(' '));
-
-                    // Crear botón para cambiar prioridad
+    
+                    // Agregar botón para cambiar la prioridad de la tarea
                     const cambiarPrioridadBtn = document.createElement('button');
                     cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
-                    cambiarPrioridadBtn.addEventListener('click', function() {
-                        cambiarPrioridad(index);
-                    });
+                    cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
                     celdaAcciones.appendChild(cambiarPrioridadBtn);
     
-                    // Agregar la celda de acciones a la fila de tarea
+                    // Añadir celda de acciones a la fila de la tarea
                     filaTarea.appendChild(celdaAcciones);
     
-                    // Agregar la fila a la tabla
+                    // Añadir la fila de la tarea a la tabla
                     tablaTareas.appendChild(filaTarea);
                 });
     
-                // Agregar la tabla al contenedor de la lista de tareas
+                // Agregar la tabla a la lista de tareas
                 listaTareas.appendChild(tablaTareas);
             })
-            .catch(error => console.error('Error al obtener las tareas:', error));
+            .catch(error => console.error('Error al obtener la lista de tareas:', error));
     }
     
     // Llamar a la función para mostrar las tareas al cargar la página
