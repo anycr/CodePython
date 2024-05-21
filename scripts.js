@@ -116,90 +116,114 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Limpiar lista de tareas antes de agregar las actualizadas
                 listaTareas.innerHTML = '';
     
-                // Crear tabla para mostrar las tareas
-                const tablaTareas = document.createElement('table');
-                tablaTareas.style.borderCollapse = 'collapse'; // Estilo para colapsar los bordes de la tabla
-                tablaTareas.style.border = '1px solid #ccc'; // Borde de la tabla
+                // Crear y agregar tabla para tareas pendientes
+                const tablaPendientes = document.createElement('table');
+                tablaPendientes.style.borderCollapse = 'collapse'; // Estilo para colapsar los bordes de la tabla
+                tablaPendientes.style.border = '1px solid #ccc'; // Borde de la tabla
     
-                // Crear fila para el título "Lista de Tareas"
-                const filaTitulo = document.createElement('tr');
-                const celdaTitulo = document.createElement('th');
-                celdaTitulo.textContent = 'Lista de Tareas';
-                celdaTitulo.style.textAlign = 'center'; // Alinear el texto al centro
-                celdaTitulo.style.padding = '10px'; // Relleno de la celda
-                celdaTitulo.setAttribute('colspan', '9'); // Colspan para abarcar todas las columnas
-                filaTitulo.appendChild(celdaTitulo);
-                tablaTareas.appendChild(filaTitulo);
-    
-                // Crear fila de encabezado de la tabla
-                const filaEncabezado = document.createElement('tr');
+                // Crear fila de encabezado de la tabla de tareas pendientes
+                const filaEncabezadoPendientes = document.createElement('tr');
                 const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Tipo de Área', 'Lugar', 'Fecha de Vencimiento', 'Fecha de Creación', 'Acciones'];
                 encabezados.forEach(encabezado => {
                     const th = document.createElement('th');
                     th.textContent = encabezado;
                     th.style.border = '1px solid #ccc'; // Borde de las celdas del encabezado
                     th.style.padding = '8px'; // Relleno de las celdas del encabezado
-                    filaEncabezado.appendChild(th);
+                    filaEncabezadoPendientes.appendChild(th);
                 });
-                tablaTareas.appendChild(filaEncabezado);
+                tablaPendientes.appendChild(filaEncabezadoPendientes);
     
-                // Agregar las tareas recibidas del servidor
-                data.tareas.forEach((tarea, index) => {
-                    // Crear fila para cada tarea
-                    const filaTarea = document.createElement('tr');
-                    filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
-
-                    // Añadir celdas con los datos de la tarea
-                    const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
-                    celdas.forEach(celda => {
-                        const td = document.createElement('td');
-                        td.textContent = celda;
-                        td.style.border = '1px solid #ccc'; // Borde de las celdas
-                        td.style.padding = '8px'; // Relleno de las celdas
-                        filaTarea.appendChild(td);
-                    });
-    
-                    // Crear celda para los botones de acciones
-                    const celdaAcciones = document.createElement('td');
-                    celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
-                    celdaAcciones.style.padding = '8px'; // Relleno de las celdas
-    
-                   // Agregar botón para marcar tarea como completada si no está completada
-                    if (!tarea.completada) {
-                        const completarBtn = document.createElement('button');
-                        completarBtn.textContent = 'Completar';
-                        completarBtn.onclick = () => completarTarea(index);
-                        completarBtn.style.marginRight = '5px'; // Espacio entre botones
-                        celdaAcciones.appendChild(completarBtn);
-
-                        // Agregar botón para cambiar la prioridad de la tarea solo si no está completada
-                        const cambiarPrioridadBtn = document.createElement('button');
-                        cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
-                        cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
-                        celdaAcciones.appendChild(cambiarPrioridadBtn);
-
-                        // Agregar espacio entre botones
-                        celdaAcciones.appendChild(document.createTextNode(' '));
-                    }
-
-                    // Agregar botón para eliminar la tarea (siempre presente)
-                    const eliminarBtn = document.createElement('button');
-                    eliminarBtn.textContent = 'Eliminar';
-                    eliminarBtn.onclick = () => eliminarTarea(index);
-                    eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
-                    celdaAcciones.appendChild(eliminarBtn);    
-    
-                    // Añadir celda de acciones a la fila de la tarea
-                    filaTarea.appendChild(celdaAcciones);
-    
-                    // Añadir la fila de la tarea a la tabla
-                    tablaTareas.appendChild(filaTarea);
+                // Agregar tareas pendientes a la tabla
+                data.tareas.filter(tarea => !tarea.completada).forEach((tarea, index) => {
+                    const filaTarea = crearFilaTarea(tarea, index);
+                    tablaPendientes.appendChild(filaTarea);
                 });
     
-                // Agregar la tabla a la lista de tareas
-                listaTareas.appendChild(tablaTareas);
+                // Crear y agregar tabla para tareas completadas
+                const tablaCompletadas = document.createElement('table');
+                tablaCompletadas.style.borderCollapse = 'collapse'; // Estilo para colapsar los bordes de la tabla
+                tablaCompletadas.style.border = '1px solid #ccc'; // Borde de la tabla
+    
+                // Crear fila de encabezado de la tabla de tareas completadas
+                const filaEncabezadoCompletadas = document.createElement('tr');
+                encabezados.forEach(encabezado => {
+                    const th = document.createElement('th');
+                    th.textContent = encabezado;
+                    th.style.border = '1px solid #ccc'; // Borde de las celdas del encabezado
+                    th.style.padding = '8px'; // Relleno de las celdas del encabezado
+                    filaEncabezadoCompletadas.appendChild(th);
+                });
+                tablaCompletadas.appendChild(filaEncabezadoCompletadas);
+    
+                // Agregar tareas completadas a la tabla
+                data.tareas.filter(tarea => tarea.completada).forEach((tarea, index) => {
+                    const filaTarea = crearFilaTarea(tarea, index);
+                    tablaCompletadas.appendChild(filaTarea);
+                });
+    
+                // Agregar títulos y tablas al contenedor
+                const tituloPendientes = document.createElement('h2');
+                tituloPendientes.textContent = 'Tareas Pendientes';
+                listaTareas.appendChild(tituloPendientes);
+                listaTareas.appendChild(tablaPendientes);
+    
+                const tituloCompletadas = document.createElement('h2');
+                tituloCompletadas.textContent = 'Tareas Completadas';
+                listaTareas.appendChild(tituloCompletadas);
+                listaTareas.appendChild(tablaCompletadas);
             })
             .catch(error => console.error('Error al obtener la lista de tareas:', error));
+    }
+    
+    function crearFilaTarea(tarea, index) {
+        // Crear fila para cada tarea
+        const filaTarea = document.createElement('tr');
+        filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
+    
+        // Añadir celdas con los datos de la tarea
+        const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
+        celdas.forEach(celda => {
+            const td = document.createElement('td');
+            td.textContent = celda;
+            td.style.border = '1px solid #ccc'; // Borde de las celdas
+            td.style.padding = '8px'; // Relleno de las celdas
+            filaTarea.appendChild(td);
+        });
+    
+        // Crear celda para los botones de acciones
+        const celdaAcciones = document.createElement('td');
+        celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
+        celdaAcciones.style.padding = '8px'; // Relleno de las celdas
+    
+        // Agregar botón para marcar tarea como completada si no está completada
+        if (!tarea.completada) {
+            const completarBtn = document.createElement('button');
+            completarBtn.textContent = 'Completar';
+            completarBtn.onclick = () => completarTarea(index);
+            completarBtn.style.marginRight = '5px'; // Espacio entre botones
+            celdaAcciones.appendChild(completarBtn);
+    
+            // Agregar botón para cambiar la prioridad de la tarea solo si no está completada
+            const cambiarPrioridadBtn = document.createElement('button');
+            cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
+            cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
+            celdaAcciones.appendChild(cambiarPrioridadBtn);
+            
+            // Agregar espacio entre botones
+            celdaAcciones.appendChild(document.createTextNode(' '));
+        }
+    
+        // Agregar botón para eliminar la tarea (siempre presente)
+        const eliminarBtn = document.createElement('button');
+        eliminarBtn.textContent = 'Eliminar';
+        eliminarBtn.onclick = () => eliminarTarea(index);
+        eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
+        celdaAcciones.appendChild(eliminarBtn);
+    
+        // Añadir celda de acciones a la fila de la tarea
+        filaTarea.appendChild(celdaAcciones);
+    
+        return filaTarea;
     }
     
     // Llamar a la función para mostrar las tareas al cargar la página
