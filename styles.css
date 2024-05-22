@@ -37,11 +37,11 @@ li {
 }
 
 .completed {
-    text-decoration: line-through;
-    color: gray;
+    background-color: rgba(177, 238, 136, 0.767);
+    color: black;
 }
 
 .vencida {
-    background-color: red;
-    color: white;
+    background-color: rgba(243, 139, 139, 0.767);
+    color: black;
 }

@@ -190,12 +190,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function crearFilaTarea(tarea, index) {
+
+        // Crear un elemento link
+        const link = document.createElement('link');
+
+        // Establecer los atributos del elemento link
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'style.css';
+
         // Crear fila para cada tarea
         const filaTarea = document.createElement('tr');
         filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
     
-        if (tarea.vencida) {
-            filaTarea.style.backgroundColor = 'red';
+        if (!tarea.completada && tarea.vencida) {
+            filaTarea.classList.add('vencida');
+        }
+
+        if (tarea.completada) {
+            filaTarea.classList.add('completed');
         }
 
         // Añadir celdas con los datos de la tarea
