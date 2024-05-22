@@ -40,3 +40,8 @@ li {
     text-decoration: line-through;
     color: gray;
 }
+
+.vencida {
+    background-color: red;
+    color: white;
+}

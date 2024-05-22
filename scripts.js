@@ -194,6 +194,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const filaTarea = document.createElement('tr');
         filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
     
+        if (tarea.vencida) {
+            filaTarea.style.backgroundColor = 'red';
+        }
+
         // Añadir celdas con los datos de la tarea
         const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
         celdas.forEach(celda => {
@@ -210,13 +214,13 @@ document.addEventListener('DOMContentLoaded', function() {
         celdaAcciones.style.padding = '8px'; // Relleno de las celdas
     
         // Agregar botón para marcar tarea como completada si no está completada
-        if (!tarea.completada) {
+         if (!tarea.completada && !tarea.vencida) {
             const completarBtn = document.createElement('button');
             completarBtn.textContent = 'Completar';
             completarBtn.onclick = () => completarTarea(index);
-            completarBtn.style.marginRight = '5px'; // Espacio entre botones
+            completarBtn.style.marginRight = '5px';
             celdaAcciones.appendChild(completarBtn);
-    
+
             // Agregar botón para cambiar la prioridad de la tarea solo si no está completada
             const cambiarPrioridadBtn = document.createElement('button');
             cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';

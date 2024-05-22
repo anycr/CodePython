@@ -53,6 +53,11 @@ class Tarea:
             self.fecha_vencimiento = nueva_fecha_vencimiento
         else:
             raise ValueError("Fecha de vencimiento inválida")
+        
+    def esta_vencida(self):
+        if self.fecha_vencimiento:
+            return self.fecha_vencimiento < datetime.datetime.now(self.fecha_vencimiento.tzinfo)      
+        return False
     
 class GestorTareas:
     def __init__(self):
@@ -68,9 +73,14 @@ class GestorTareas:
     def marcar_completada(self, posicion):
         try:
             tarea = self.tareas[posicion]
+            # Verificar si la tarea está vencida antes de marcarla como completada
+            if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
+                raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.completada = True
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")  
+        except ValueError as e:
+            print(e) 
 
     def ordenar_por_estado_y_prioridad(self):
         prioridad_orden = {'Alta': 1, 'Normal': 2, 'Baja': 3}
@@ -88,7 +98,8 @@ class GestorTareas:
                 "fecha_creacion": tarea.fecha_creacion.strftime("%Y-%m-%d %H:%M:%S %Z%z"),
                 "fecha_vencimiento": tarea.fecha_vencimiento.strftime("%Y-%m-%d %H:%M:%S %Z%z") if tarea.fecha_vencimiento else None,
                 "tipo_area": tarea.tipo_area,
-                "lugar": tarea.lugar
+                "lugar": tarea.lugar,
+                "vencida": tarea.esta_vencida()
             }
             tareas_dict.append(tarea_dict)
         return tareas_dict
@@ -102,13 +113,21 @@ class GestorTareas:
     def cambiar_prioridad(self, posicion, nueva_prioridad):
         try:
             tarea = self.tareas[posicion]
+            # Verificar si la tarea está vencida antes de cambiar la prioridad
+            if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
+                raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.prioridad = nueva_prioridad
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
+        except ValueError as e:
+            print(e)
     
     def establecer_vencimiento(self, posicion, fecha_vencimiento):
         try:
             tarea = self.tareas[posicion]
+            # Verificar si la tarea está vencida antes de establecer una nueva fecha de vencimiento
+            if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
+                raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.establecer_vencimiento(fecha_vencimiento)
         except IndexError:
             print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
@@ -146,12 +165,18 @@ def index():
 
 @app.route('/completar/<int:posicion>', methods=['POST'])
 def completar_tarea(posicion):
-    gestor.marcar_completada(posicion)
+    try:
+        gestor.marcar_completada(posicion)
+    except ValueError as e:
+        return str(e), 400
     return jsonify(tareas=gestor.mostrar_tareas())
 
 @app.route('/eliminar/<int:posicion>')
 def eliminar_tarea(posicion):
-    gestor.eliminar_tarea(posicion)
+    try:
+        gestor.eliminar_tarea(posicion)
+    except ValueError as e:
+        return str(e), 400
     return redirect('/')
 
 @app.route('/cambiar_prioridad/<int:posicion>', methods=['POST'])
