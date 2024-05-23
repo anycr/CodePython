@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor de Tareas de Mantenimiento</title>
+    <title>Gestor de Tareas de limpieza de un Hotel</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Gestor de Tareas de Mantenimiento</h1>
+    <h1>Gestor de Tareas de limpieza de un Hotel</h1>
     
     <!-- Formulario para agregar una nueva tarea -->
     <form id="form-tarea" enctype="application/json">
@@ -15,14 +15,14 @@
         <input type="text" id="descripcion" placeholder="Descripción de la tarea" required>
 
         <label for="asignado">Asignado a:</label>
-        <input type="text" id="asignado" placeholder="Asignado a" required>
+        <input type="text" id="asignado" placeholder="Asignado a" required><br><br>
 
         <label for="prioridad" required>Prioridad:</label>
         <select id="prioridad" name="prioridad">
             <option value="alta">Alta</option>
             <option value="normal" selected>Normal</option>
             <option value="baja">Baja</option>
-        </select><br><br>
+        </select>
 
         <label for="tipo_area">Tipo de Área:</label>
         <select id="tipo_area" name="tipo_area" required>

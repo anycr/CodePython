@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 // Crear fila de encabezado de la tabla de tareas pendientes
                 const filaEncabezadoPendientes = document.createElement('tr');
-                const encabezados = ['Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Tipo de Área', 'Lugar', 'Fecha de Vencimiento', 'Fecha de Creación', 'Acciones'];
+                const encabezados = ['Número', 'Descripción', 'Asignado a', 'Estado', 'Prioridad', 'Tipo de Área', 'Lugar', 'Fecha de Vencimiento', 'Fecha de Creación', 'Acciones'];
                 encabezados.forEach(encabezado => {
                     const th = document.createElement('th');
                     th.textContent = encabezado;
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tablaPendientes.appendChild(filaEncabezadoPendientes);
     
                 // Agregar tareas pendientes a la tabla
-                data.tareas.filter(tarea => !tarea.completada).forEach(tarea => {
+                data.tareas.pendientes.forEach(tarea => {
                     const filaTarea = crearFilaTarea(tarea);
                     tablaPendientes.appendChild(filaTarea);
                 });
@@ -170,10 +170,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 tablaCompletadas.appendChild(filaEncabezadoCompletadas);
     
                 // Agregar tareas completadas a la tabla
-                data.tareas.filter(tarea => tarea.completada).forEach(tarea => {
+                data.tareas.completadas.forEach(tarea => {
                     const filaTarea = crearFilaTarea(tarea);
                     tablaCompletadas.appendChild(filaTarea);
                 });
+
     
                 // Agregar títulos y tablas al contenedor
                 const tituloPendientes = document.createElement('h2');
@@ -211,6 +212,13 @@ document.addEventListener('DOMContentLoaded', function() {
             filaTarea.classList.add('completed');
         }
 
+        // Agregar el número de la tarea como primer elemento en las tareas pendientes y completadas
+        const numeroTd = document.createElement('td');
+        numeroTd.textContent = tarea.numero; // Utilizamos el número proporcionado por el backend
+        numeroTd.style.border = '1px solid #ccc'; // Borde de las celdas
+        numeroTd.style.padding = '8px'; // Relleno de las celdas
+        filaTarea.appendChild(numeroTd);
+
         // Añadir celdas con los datos de la tarea
         const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
         celdas.forEach(celda => {
@@ -220,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
             td.style.padding = '8px'; // Relleno de las celdas
             filaTarea.appendChild(td);
         });
-    
+
         // Crear celda para los botones de acciones
         const celdaAcciones = document.createElement('td');
         celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas

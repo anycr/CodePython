@@ -92,10 +92,13 @@ class GestorTareas:
 
     def mostrar_tareas(self):
         self.ordenar_por_estado_y_prioridad()  # Ordenar las tareas antes de mostrarlas
-        tareas_dict = []
-        for tarea in self.tareas:
+        tareas_pendientes = []
+        tareas_completadas = []
+
+        for index, tarea in enumerate(self.tareas, start=1):
             tarea_dict = {
                 "id": tarea.id,
+                "numero": index,
                 "descripcion": tarea.descripcion,
                 "asignado": tarea.asignado,
                 "prioridad": tarea.prioridad,
@@ -106,8 +109,19 @@ class GestorTareas:
                 "lugar": tarea.lugar,
                 "vencida": tarea.esta_vencida()
             }
-            tareas_dict.append(tarea_dict)
-        return tareas_dict
+            if tarea.completada:
+                tareas_completadas.append(tarea_dict)
+            else:
+                tareas_pendientes.append(tarea_dict)
+
+        # Numerar tareas pendientes y completadas por separado
+        for i, tarea in enumerate(tareas_pendientes, start=1):
+            tarea['numero'] = i
+
+        for i, tarea in enumerate(tareas_completadas, start=1):
+            tarea['numero'] = i
+
+        return {"pendientes": tareas_pendientes, "completadas": tareas_completadas}
 
     def eliminar_tarea(self, id):
         try:
