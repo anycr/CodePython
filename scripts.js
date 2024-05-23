@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function agregarTarea(descripcion, asignado, prioridad, tipo_area, lugar, fecha_vencimiento) {
-        var tarea = {
+        const tarea = {
             descripcion: descripcion,
             asignado: asignado,
             prioridad: prioridad,
@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function completarTarea(posicion) {
-        fetch(`http://127.0.0.1:5000/completar/${posicion}`, {
+    function completarTarea(id) {
+        fetch(`http://127.0.0.1:5000/completar/${id}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -90,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function eliminarTarea(index) {
-        fetch(`http://127.0.0.1:5000/eliminar/${index}`, {
+    function eliminarTarea(id) {
+        fetch(`http://127.0.0.1:5000/eliminar/${id}`, {
             method: 'GET'
         })
         .then(response => {
@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => console.error('Error al eliminar la tarea:', error));
     } 
 
-    function cambiarPrioridad(index) {
+    function cambiarPrioridad(id) {
         const nuevaPrioridad = prompt('Ingrese la nueva prioridad (Alta, Normal, Baja):');
         if (nuevaPrioridad) {
-            fetch(`http://127.0.0.1:5000/cambiar_prioridad/${index}`, {
+            fetch(`http://127.0.0.1:5000/cambiar_prioridad/${id}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -148,8 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 tablaPendientes.appendChild(filaEncabezadoPendientes);
     
                 // Agregar tareas pendientes a la tabla
-                data.tareas.filter(tarea => !tarea.completada).forEach((tarea, index) => {
-                    const filaTarea = crearFilaTarea(tarea, index);
+                data.tareas.filter(tarea => !tarea.completada).forEach(tarea => {
+                    const filaTarea = crearFilaTarea(tarea);
                     tablaPendientes.appendChild(filaTarea);
                 });
     
@@ -170,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 tablaCompletadas.appendChild(filaEncabezadoCompletadas);
     
                 // Agregar tareas completadas a la tabla
-                data.tareas.filter(tarea => tarea.completada).forEach((tarea, index) => {
-                    const filaTarea = crearFilaTarea(tarea, index);
+                data.tareas.filter(tarea => tarea.completada).forEach(tarea => {
+                    const filaTarea = crearFilaTarea(tarea);
                     tablaCompletadas.appendChild(filaTarea);
                 });
     
@@ -230,14 +230,14 @@ document.addEventListener('DOMContentLoaded', function() {
          if (!tarea.completada && !tarea.vencida) {
             const completarBtn = document.createElement('button');
             completarBtn.textContent = 'Completar';
-            completarBtn.onclick = () => completarTarea(index);
+            completarBtn.onclick = () => completarTarea(tarea.id);
             completarBtn.style.marginRight = '5px';
             celdaAcciones.appendChild(completarBtn);
 
             // Agregar botón para cambiar la prioridad de la tarea solo si no está completada
             const cambiarPrioridadBtn = document.createElement('button');
             cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
-            cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
+            cambiarPrioridadBtn.onclick = () => cambiarPrioridad(tarea.id);
             celdaAcciones.appendChild(cambiarPrioridadBtn);
 
             // Agregar espacio entre botones
@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Agregar botón para eliminar la tarea (siempre presente)
         const eliminarBtn = document.createElement('button');
         eliminarBtn.textContent = 'Eliminar';
-        eliminarBtn.onclick = () => eliminarTarea(index);
+        eliminarBtn.onclick = () => eliminarTarea(tarea.id);
         eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
         celdaAcciones.appendChild(eliminarBtn);
     
@@ -314,58 +314,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Llamamos al evento de cambio una vez al cargar la página para asegurarnos de que se muestre la lista de selección inicialmente
     inputTipoArea.dispatchEvent(new Event('change'));
-
-    data.tareas.forEach((tarea, index) => {
-        // Crear fila para cada tarea
-        const filaTarea = document.createElement('tr');
-        filaTarea.style.border = '1px solid #ccc'; // Borde de las filas
-        
-        if (tarea.completada) {
-            filaTarea.classList.add('completed'); // Agregar clase si la tarea está completada
-        }
-    
-        // Añadir celdas con los datos de la tarea
-        const celdas = [tarea.descripcion, tarea.asignado, tarea.completada ? 'Completada' : 'Pendiente', tarea.prioridad, tarea.tipo_area, tarea.lugar, tarea.fecha_vencimiento, tarea.fecha_creacion];
-        celdas.forEach(celda => {
-            const td = document.createElement('td');
-            td.textContent = celda;
-            td.style.border = '1px solid #ccc'; // Borde de las celdas
-            td.style.padding = '8px'; // Relleno de las celdas
-            filaTarea.appendChild(td);
-        });
-    
-        // Crear celda para los botones de acciones
-        const celdaAcciones = document.createElement('td');
-        celdaAcciones.style.border = '1px solid #ccc'; // Borde de las celdas
-        celdaAcciones.style.padding = '8px'; // Relleno de las celdas
-    
-        // Agregar botón para marcar tarea como completada
-        if (!tarea.completada) {
-            const completarBtn = document.createElement('button');
-            completarBtn.textContent = 'Completar';
-            completarBtn.onclick = () => completarTarea(index);
-            completarBtn.style.marginRight = '5px'; // Espacio entre botones
-            celdaAcciones.appendChild(completarBtn);
-        }
-    
-        // Agregar botón para eliminar la tarea
-        const eliminarBtn = document.createElement('button');
-        eliminarBtn.textContent = 'Eliminar';
-        eliminarBtn.onclick = () => eliminarTarea(index);
-        eliminarBtn.style.marginRight = '5px'; // Espacio entre botones
-        celdaAcciones.appendChild(eliminarBtn);
-    
-        // Agregar botón para cambiar la prioridad de la tarea
-        const cambiarPrioridadBtn = document.createElement('button');
-        cambiarPrioridadBtn.textContent = 'Cambiar Prioridad';
-        cambiarPrioridadBtn.onclick = () => cambiarPrioridad(index);
-        celdaAcciones.appendChild(cambiarPrioridadBtn);
-    
-        // Añadir celda de acciones a la fila de la tarea
-        filaTarea.appendChild(celdaAcciones);
-    
-        // Añadir la fila de la tarea a la tabla
-        tablaTareas.appendChild(filaTarea);
-    });
 
 });

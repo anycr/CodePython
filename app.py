@@ -7,7 +7,11 @@ app = Flask(__name__)
 CORS(app)
 
 class Tarea:
+    id_counter = 0  # Contador de IDs únicos
+
     def __init__(self, descripcion, asignado=None, completada=False, prioridad=None, tipo_area=None, lugar=None, fecha_vencimiento=None):
+        self.id = Tarea.id_counter  # Asignar ID único
+        Tarea.id_counter += 1  # Incrementar contador
         self.descripcion = descripcion
         self.asignado = asignado
         self.completada = completada
@@ -70,17 +74,17 @@ class GestorTareas:
         except Exception as e:
             print(f"Error al agregar tarea: {e}")
 
-    def marcar_completada(self, posicion):
+    def marcar_completada(self, id):
         try:
-            tarea = self.tareas[posicion]
+            tarea = next(tarea for tarea in self.tareas if tarea.id == id)
             # Verificar si la tarea está vencida antes de marcarla como completada
             if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
                 raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.completada = True
-        except IndexError:
-            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")  
+        except StopIteration:
+            print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
         except ValueError as e:
-            print(e) 
+            print(e)
 
     def ordenar_por_estado_y_prioridad(self):
         prioridad_orden = {'Alta': 1, 'Normal': 2, 'Baja': 3}
@@ -91,6 +95,7 @@ class GestorTareas:
         tareas_dict = []
         for tarea in self.tareas:
             tarea_dict = {
+                "id": tarea.id,
                 "descripcion": tarea.descripcion,
                 "asignado": tarea.asignado,
                 "prioridad": tarea.prioridad,
@@ -104,33 +109,34 @@ class GestorTareas:
             tareas_dict.append(tarea_dict)
         return tareas_dict
 
-    def eliminar_tarea(self, posicion):
+    def eliminar_tarea(self, id):
         try:
-            del self.tareas[posicion]
-        except IndexError:
-            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
+            tarea = next(tarea for tarea in self.tareas if tarea.id == id)
+            self.tareas.remove(tarea)
+        except StopIteration:
+            print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
 
-    def cambiar_prioridad(self, posicion, nueva_prioridad):
+    def cambiar_prioridad(self, id, nueva_prioridad):
         try:
-            tarea = self.tareas[posicion]
+            tarea = next(tarea for tarea in self.tareas if tarea.id == id)
             # Verificar si la tarea está vencida antes de cambiar la prioridad
             if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
                 raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.prioridad = nueva_prioridad
-        except IndexError:
-            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
+        except StopIteration:
+            print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
         except ValueError as e:
             print(e)
     
-    def establecer_vencimiento(self, posicion, fecha_vencimiento):
+    def establecer_vencimiento(self, id, fecha_vencimiento):
         try:
-            tarea = self.tareas[posicion]
+            tarea = next(tarea for tarea in self.tareas if tarea.id == id)
             # Verificar si la tarea está vencida antes de establecer una nueva fecha de vencimiento
             if tarea.fecha_vencimiento and tarea.fecha_vencimiento < datetime.datetime.now(tarea.fecha_vencimiento.tzinfo):
                 raise ValueError("La tarea está vencida y no se puede modificar")
             tarea.establecer_vencimiento(fecha_vencimiento)
-        except IndexError:
-            print("La posición no existe en la lista de tareas. Por favor, elija una posición válida.")
+        except StopIteration:
+            print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
         except ValueError as e:
             print(e)
 
@@ -163,38 +169,38 @@ def index():
     return jsonify(tareas=gestor.mostrar_tareas())
 
 
-@app.route('/completar/<int:posicion>', methods=['POST'])
-def completar_tarea(posicion):
+@app.route('/completar/<int:id>', methods=['POST'])
+def completar_tarea(id):
     try:
-        gestor.marcar_completada(posicion)
+        gestor.marcar_completada(id)
     except ValueError as e:
         return str(e), 400
     return jsonify(tareas=gestor.mostrar_tareas())
 
-@app.route('/eliminar/<int:posicion>')
-def eliminar_tarea(posicion):
+@app.route('/eliminar/<int:id>')
+def eliminar_tarea(id):
     try:
-        gestor.eliminar_tarea(posicion)
+        gestor.eliminar_tarea(id)
     except ValueError as e:
         return str(e), 400
     return redirect('/')
 
-@app.route('/cambiar_prioridad/<int:posicion>', methods=['POST'])
-def cambiar_prioridad(posicion):
+@app.route('/cambiar_prioridad/<int:id>', methods=['POST'])
+def cambiar_prioridad(id):
     if request.is_json:
         data = request.get_json()
         nueva_prioridad = data.get('prioridad')
-        gestor.cambiar_prioridad(posicion, nueva_prioridad)
+        gestor.cambiar_prioridad(id, nueva_prioridad)
         return jsonify(tareas=gestor.mostrar_tareas())
     return 'Solicitud no válida', 400
 
-@app.route('/establecer_vencimiento/<int:posicion>', methods=['POST'])
-def establecer_vencimiento(posicion):
+@app.route('/establecer_vencimiento/<int:id>', methods=['POST'])
+def establecer_vencimiento(id):
     if request.is_json:
         data = request.get_json()
         fecha_vencimiento = data.get('fecha_vencimiento')
         try:
-            gestor.establecer_vencimiento(posicion, fecha_vencimiento)
+            gestor.establecer_vencimiento(id, fecha_vencimiento)
         except ValueError as e:
             return str(e), 400
         return jsonify(tareas=gestor.mostrar_tareas())
