@@ -19,9 +19,7 @@ class Tarea:
         self.fecha_creacion = self.get_current_time_in_spain()  # Fecha y hora de creación con zona horaria UTC
         self.fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
         self.tipo_area = tipo_area
-        self.lugar = lugar   
-        self.tipo_area = tipo_area
-        self.lugar = lugar
+        self.lugar = lugar 
 
     def __str__(self):
         estado = "Completada" if self.completada else "Pendiente"
@@ -86,6 +84,12 @@ class GestorTareas:
         except ValueError as e:
             print(e)
 
+    def contar_tareas(self):
+        total_pendientes = sum(1 for tarea in self.tareas if not tarea.completada and not tarea.esta_vencida())
+        total_completadas = sum(1 for tarea in self.tareas if tarea.completada)
+        total_vencidas = sum(1 for tarea in self.tareas if tarea.esta_vencida())
+        return total_pendientes, total_completadas, total_vencidas
+
     def ordenar_por_estado_y_prioridad(self):
         prioridad_orden = {'Alta': 1, 'Normal': 2, 'Baja': 3}
         self.tareas.sort(key=lambda tarea: (tarea.completada, prioridad_orden.get(tarea.prioridad, 4)))
@@ -121,7 +125,12 @@ class GestorTareas:
         for i, tarea in enumerate(tareas_completadas, start=1):
             tarea['numero'] = i
 
-        return {"pendientes": tareas_pendientes, "completadas": tareas_completadas}
+        # Obtener contadores de tareas
+        total_pendientes, total_completadas, total_vencidas = self.contar_tareas()
+
+        return {"pendientes": tareas_pendientes, "completadas": tareas_completadas, 
+                "total_pendientes": total_pendientes, "total_completadas": total_completadas,
+                "total_vencidas": total_vencidas}
 
     def eliminar_tarea(self, id):
         try:

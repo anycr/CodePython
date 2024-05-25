@@ -186,6 +186,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 tituloCompletadas.textContent = 'Tareas Completadas';
                 listaTareas.appendChild(tituloCompletadas);
                 listaTareas.appendChild(tablaCompletadas);
+
+                 // Mostrar los totales de las tareas
+                const contenedorTotales = document.createElement('div');
+                contenedorTotales.innerHTML = `
+                    <p>Total de tareas completadas: ${data.tareas.total_completadas}</p>
+                    <p>Total de tareas pendientes: ${data.tareas.total_pendientes}</p>
+                    <p>Total de tareas vencidas: ${data.tareas.total_vencidas}</p>
+                `;
+                listaTareas.appendChild(contenedorTotales);
             })
             .catch(error => console.error('Error al obtener la lista de tareas:', error));
     }
