@@ -3,9 +3,13 @@ from flask_cors import CORS
 import datetime
 import pytz
 
+# Crear una instancia de Flask
 app = Flask(__name__)
+
+# Habilitar CORS para permitir solicitudes desde cualquier origen
 CORS(app)
 
+# Definición de la clase Tarea
 class Tarea:
     id_counter = 0  # Contador de IDs únicos
 
@@ -16,7 +20,7 @@ class Tarea:
         self.asignado = asignado
         self.completada = completada
         self.prioridad = prioridad.capitalize() if prioridad else None
-        self.fecha_creacion = self.get_current_time_in_spain()  # Fecha y hora de creación con zona horaria UTC
+        self.fecha_creacion = self.get_current_time_in_spain()  # Fecha y hora de creación con zona horaria de España
         self.fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
         self.tipo_area = tipo_area
         self.lugar = lugar 
@@ -25,10 +29,12 @@ class Tarea:
         estado = "Completada" if self.completada else "Pendiente"
         return f"{self.descripcion} - {estado}"
     
+    # Obtener la hora actual en la zona horaria de España
     def get_current_time_in_spain(self):
         tz_spain = pytz.timezone('Europe/Madrid')
         return datetime.datetime.now(tz_spain)
    
+    # Parsear la fecha de vencimiento y convertirla a la zona horaria de España
     def parse_fecha_vencimiento(self, fecha_vencimiento):
         if not fecha_vencimiento:
             return None
@@ -49,6 +55,7 @@ class Tarea:
                 continue
         return None
     
+    # Establecer una nueva fecha de vencimiento
     def establecer_vencimiento(self, fecha_vencimiento):
         nueva_fecha_vencimiento = self.parse_fecha_vencimiento(fecha_vencimiento)
         if nueva_fecha_vencimiento:
@@ -56,15 +63,18 @@ class Tarea:
         else:
             raise ValueError("Fecha de vencimiento inválida")
         
+    # Verificar si la tarea está vencida
     def esta_vencida(self):
         if self.fecha_vencimiento:
             return self.fecha_vencimiento < datetime.datetime.now(self.fecha_vencimiento.tzinfo)      
         return False
     
+# Definición de la clase GestorTareas para gestionar las tareas
 class GestorTareas:
     def __init__(self):
         self.tareas = []
 
+    # Agregar una nueva tarea
     def agregar_tarea(self, descripcion, asignado=None, prioridad=None, tipo_area=None, lugar=None, fecha_vencimiento=None):
         try:
             tarea = Tarea(descripcion, asignado, False, prioridad, tipo_area, lugar, fecha_vencimiento)
@@ -72,6 +82,7 @@ class GestorTareas:
         except Exception as e:
             print(f"Error al agregar tarea: {e}")
 
+    # Marcar una tarea como completada
     def marcar_completada(self, id):
         try:
             tarea = next(tarea for tarea in self.tareas if tarea.id == id)
@@ -84,16 +95,19 @@ class GestorTareas:
         except ValueError as e:
             print(e)
     
+    # Contar tareas pendientes, completadas y vencidas
     def contar_tareas(self):
         total_pendientes = sum(1 for tarea in self.tareas if not tarea.completada and not tarea.esta_vencida())
         total_completadas = sum(1 for tarea in self.tareas if tarea.completada)
         total_vencidas = sum(1 for tarea in self.tareas if tarea.esta_vencida() and not tarea.completada)
         return total_pendientes, total_completadas, total_vencidas
 
+    # Ordenar las tareas por estado (completada o pendiente) y prioridad
     def ordenar_por_estado_y_prioridad(self):
         prioridad_orden = {'Alta': 1, 'Normal': 2, 'Baja': 3}
         self.tareas.sort(key=lambda tarea: (tarea.completada, prioridad_orden.get(tarea.prioridad, 4)))
 
+    # Mostrar tareas pendientes y completadas
     def mostrar_tareas(self):
         self.ordenar_por_estado_y_prioridad()  # Ordenar las tareas antes de mostrarlas
         tareas_pendientes = []
@@ -132,6 +146,7 @@ class GestorTareas:
                 "total_pendientes": total_pendientes, "total_completadas": total_completadas,
                 "total_vencidas": total_vencidas}
 
+    # Eliminar una tarea por ID
     def eliminar_tarea(self, id):
         try:
             tarea = next(tarea for tarea in self.tareas if tarea.id == id)
@@ -139,6 +154,7 @@ class GestorTareas:
         except StopIteration:
             print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
 
+    # Cambiar la prioridad de una tarea por ID
     def cambiar_prioridad(self, id, nueva_prioridad):
         try:
             tarea = next(tarea for tarea in self.tareas if tarea.id == id)
@@ -151,6 +167,7 @@ class GestorTareas:
         except ValueError as e:
             print(e)
     
+    # Establecer una nueva fecha de vencimiento para una tarea por ID
     def establecer_vencimiento(self, id, fecha_vencimiento):
         try:
             tarea = next(tarea for tarea in self.tareas if tarea.id == id)
@@ -163,8 +180,10 @@ class GestorTareas:
         except ValueError as e:
             print(e)
 
+# Crear una instancia del gestor de tareas
 gestor = GestorTareas()
 
+# Definición de la ruta principal para obtener y agregar tareas
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -191,7 +210,7 @@ def index():
             return jsonify(tareas=gestor.mostrar_tareas())
     return jsonify(tareas=gestor.mostrar_tareas())
 
-
+# Ruta para marcar una tarea como completada por ID
 @app.route('/completar/<int:id>', methods=['POST'])
 def completar_tarea(id):
     try:
@@ -200,6 +219,7 @@ def completar_tarea(id):
         return str(e), 400
     return jsonify(tareas=gestor.mostrar_tareas())
 
+# Ruta para eliminar una tarea por ID
 @app.route('/eliminar/<int:id>')
 def eliminar_tarea(id):
     try:
@@ -208,6 +228,7 @@ def eliminar_tarea(id):
         return str(e), 400
     return redirect('/')
 
+# Ruta para cambiar la prioridad de una tarea por ID
 @app.route('/cambiar_prioridad/<int:id>', methods=['POST'])
 def cambiar_prioridad(id):
     if request.is_json:
@@ -217,6 +238,7 @@ def cambiar_prioridad(id):
         return jsonify(tareas=gestor.mostrar_tareas())
     return 'Solicitud no válida', 400
 
+# Ruta para establecer una nueva fecha de vencimiento para una tarea por ID
 @app.route('/establecer_vencimiento/<int:id>', methods=['POST'])
 def establecer_vencimiento(id):
     if request.is_json:
@@ -229,11 +251,12 @@ def establecer_vencimiento(id):
         return jsonify(tareas=gestor.mostrar_tareas())
     return 'Solicitud no válida', 400
 
-
+# Manejador de errores para capturar excepciones en el servidor
 @app.errorhandler(Exception)
 def handle_error(error):
     print('Se produjo un error en el servidor:', error)
     return 'Se produjo un error en el servidor', 500
 
+# Ejecutar la aplicación Flask
 if __name__ == "__main__":
     app.run(debug=True)
