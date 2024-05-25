@@ -83,11 +83,11 @@ class GestorTareas:
             print("El ID no existe en la lista de tareas. Por favor, elija un ID válido.")
         except ValueError as e:
             print(e)
-
+    
     def contar_tareas(self):
         total_pendientes = sum(1 for tarea in self.tareas if not tarea.completada and not tarea.esta_vencida())
         total_completadas = sum(1 for tarea in self.tareas if tarea.completada)
-        total_vencidas = sum(1 for tarea in self.tareas if tarea.esta_vencida())
+        total_vencidas = sum(1 for tarea in self.tareas if tarea.esta_vencida() and not tarea.completada)
         return total_pendientes, total_completadas, total_vencidas
 
     def ordenar_por_estado_y_prioridad(self):

@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  // Mostrar los totales de las tareas
                 const contenedorTotales = document.createElement('div');
                 contenedorTotales.innerHTML = `
+                    <h3>Total de tareas:</h3>
                     <p>Total de tareas completadas: ${data.tareas.total_completadas}</p>
                     <p>Total de tareas pendientes: ${data.tareas.total_pendientes}</p>
                     <p>Total de tareas vencidas: ${data.tareas.total_vencidas}</p>
