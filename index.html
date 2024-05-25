@@ -7,42 +7,44 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Gestor de Tareas de limpieza de un Hotel</h1>
+    <h1 id="h1">Gestor de Tareas de limpieza de un Hotel</h1>
     
-    <!-- Formulario para agregar una nueva tarea -->
-    <form id="form-tarea" enctype="application/json">
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" placeholder="Descripción de la tarea" required>
+    <div id="form-container">
+        <!-- Formulario para agregar una nueva tarea -->
+        <form id="form-tarea" enctype="application/json">
+            <label for="descripcion">Descripción:</label>
+            <input type="text" id="descripcion" placeholder="Descripción de la tarea" required>
 
-        <label for="asignado">Asignado a:</label>
-        <input type="text" id="asignado" placeholder="Asignado a" required><br><br>
+            <label for="asignado">Asignado a:</label>
+            <input type="text" id="asignado" placeholder="Asignado a" required>
 
-        <label for="prioridad" required>Prioridad:</label>
-        <select id="prioridad" name="prioridad">
-            <option value="alta">Alta</option>
-            <option value="normal" selected>Normal</option>
-            <option value="baja">Baja</option>
-        </select>
+            <label for="prioridad" required>Prioridad:</label>
+            <select id="prioridad" name="prioridad">
+                <option value="alta">Alta</option>
+                <option value="normal" selected>Normal</option>
+                <option value="baja">Baja</option>
+            </select>
 
-        <label for="tipo_area">Tipo de Área:</label>
-        <select id="tipo_area" name="tipo_area" required>
-            <option value="">Seleccionar...</option>
-            <option value="Habitaciones">Habitaciones</option>
-            <option value="Espacios">Espacios</option>
-        </select><br><br>
+            <label for="tipo_area">Tipo de Área:</label>
+            <select id="tipo_area" name="tipo_area" required>
+                <option value="">Seleccionar...</option>
+                <option value="Habitaciones">Habitaciones</option>
+                <option value="Espacios">Espacios</option>
+            </select>
 
-        <label for="lugar" required>Lugar:</label>
-        <div id="lugar-container">
-            <!-- Aquí se generará el select dinámicamente -->
-        </div><br>
+            <label for="lugar" required>Lugar:</label>
+            <div id="lugar-container">
+                <!-- Aquí se generará el select dinámicamente -->
+            </div>
 
-        <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
-        <input type="datetime-local" id="fecha_vencimiento" name="fecha_vencimiento" required>
+            <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
+            <input type="datetime-local" id="fecha_vencimiento" name="fecha_vencimiento" required>
 
-        <button type="submit">Agregar Tarea</button>
+            <button type="submit">Agregar Tarea</button>
 
-        <div id="mensaje-error" style="color: red; margin-top: 10px;"></div>
-    </form>
+            <div id="mensaje-error" class="#mensaje-error"></div>
+        </form>
+    </div>
 
     <!-- Lista de tareas -->
     <ul id="lista-tareas">
