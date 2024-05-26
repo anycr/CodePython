@@ -1,0 +1,89 @@
+{
+    "tareas": {
+        "completadas": [
+            {
+                "asignado": "Lili",
+                "completada": true,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:34:39 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 10:38:00 CEST+0200",
+                "id": 1,
+                "lugar": "002",
+                "numero": 1,
+                "prioridad": "Alta",
+                "tipo_area": "Habitaciones",
+                "vencida": true
+            },
+            {
+                "asignado": "Pablo",
+                "completada": true,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:36:27 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 10:40:00 CEST+0200",
+                "id": 3,
+                "lugar": "Vestíbulo/Recepción",
+                "numero": 2,
+                "prioridad": "Normal",
+                "tipo_area": "Espacios",
+                "vencida": false
+            },
+            {
+                "asignado": "Pedro",
+                "completada": true,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:34:03 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 11:40:00 CEST+0200",
+                "id": 0,
+                "lugar": "001",
+                "numero": 3,
+                "prioridad": "Normal",
+                "tipo_area": "Habitaciones",
+                "vencida": false
+            },
+            {
+                "asignado": "Sofia",
+                "completada": true,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:35:12 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 11:41:00 CEST+0200",
+                "id": 2,
+                "lugar": "003",
+                "numero": 4,
+                "prioridad": "Baja",
+                "tipo_area": "Habitaciones",
+                "vencida": false
+            }
+        ],
+        "pendientes": [
+            {
+                "asignado": "Lola",
+                "completada": false,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:37:12 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 10:38:00 CEST+0200",
+                "id": 4,
+                "lugar": "Bar",
+                "numero": 1,
+                "prioridad": "Normal",
+                "tipo_area": "Espacios",
+                "vencida": true
+            },
+            {
+                "asignado": "Lucas",
+                "completada": false,
+                "descripcion": "Limpiar",
+                "fecha_creacion": "2024-05-26 10:37:44 CEST+0200",
+                "fecha_vencimiento": "2024-05-26 12:37:00 CEST+0200",
+                "id": 5,
+                "lugar": "Spa",
+                "numero": 2,
+                "prioridad": "Normal",
+                "tipo_area": "Espacios",
+                "vencida": false
+            }
+        ],
+        "total_completadas": 4,
+        "total_pendientes": 1,
+        "total_vencidas": 1
+    }
+}
