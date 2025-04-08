@@ -15,18 +15,18 @@ JavaScript
 ```
 ###  📌 Contenido:
 ```
-📂 CASOPRACTICOFINAL
- ┣ 📂 CodePython
- ┃ ┣ 📂 Evidencias
- ┃ ┃ ┣ 📄 EstructuraJsonFinal.json
- ┃ ┃ ┣ 📄 EvidenciaJson1.PNG
- ┃ ┃ ┣ 📄 EvidenciaJson2.PNG
- ┃ ┃ ┣ 📄 FuncionalidadGestor.PNG
- ┃ ┃ ┗ 📄 Inicio.PNG
- ┃ ┣ 📄 app.py --> Codigo python del gestor de tarea (Backend)
- ┃ ┣ 📄 index.html --> Estructura básica de la página
- ┃ ┣ 📄 scripts.js -->  clases y objetos en JavaScript de manera similar a como se encuentra en Python
- ┃ ┗ 📄 styles.css --> Aspecto visual de la aplicación
+
+  📂 CodePython
+  ┣ 📂 Evidencias
+  ┃ ┣ 📄 EstructuraJsonFinal.json
+  ┃ ┣ 📄 EvidenciaJson1.PNG
+  ┃ ┣ 📄 EvidenciaJson2.PNG
+  ┃ ┣ 📄 FuncionalidadGestor.PNG
+  ┃ ┗ 📄 Inicio.PNG
+  ┣ 📄 app.py --> Codigo python del gestor de tarea (Backend)
+  ┣ 📄 index.html --> Estructura básica de la página
+  ┣ 📄 scripts.js --> Clases y objetos en JavaScript de manera similar a como se encuentra en Python
+  ┗ 📄 styles.css --> Aspecto visual de la aplicación
 ```
 
 ###  📌 Para ejecutarlo:
