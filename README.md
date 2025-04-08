@@ -1,39 +1,65 @@
 # CodePython-- Annya Corrales
  ## Caso práctico final:
-    Código de un gestor de tareas para llevar las tareas de limpieza de un hotel:
+Código de un gestor de tareas para llevar las tareas de limpieza de un hotel:
 								   
 ###  📌 Como se guardan los datos: 
-	Los datos de las tareas están almacenados en la memoria del servidor Flask, específicamente dentro del objeto gestor,que persiste mientras la aplicación Flask esté en ejecución. Cada vez que se agrega, elimina o modifica una tarea, estos cambios se reflejan en la lista 'self.tareas' del objeto 'gestor'.
-
-###  📌 Contenido:	
+Los datos de las tareas están almacenados en la memoria del servidor Flask, específicamente dentro del objeto gestor,que persiste mientras la aplicación Flask esté en ejecución. Cada vez que se agrega, elimina o modifica una tarea, estos cambios se reflejan en la lista 'self.tareas' del objeto 'gestor'.
+ 
+###  📌 ️ Tecnologías Utilizadas:
 ```
-Backend: app.py
+Python 3.11
+Flask
+HTML
+CSS
+JavaScript
 ```
+###  📌 Contenido:
 ```
-Front-end: HTML, CSS y JavaScript:  index.html
-                                    styles.css
-                                    scripts.js
+📂 CASOPRACTICOFINAL
+ ┣ 📂 CodePython
+ ┃ ┣ 📂 Evidencias
+ ┃ ┃ ┣ 📄 EstructuraJsonFinal.json
+ ┃ ┃ ┣ 📄 EvidenciaJson1.PNG
+ ┃ ┃ ┣ 📄 EvidenciaJson2.PNG
+ ┃ ┃ ┣ 📄 FuncionalidadGestor.PNG
+ ┃ ┃ ┗ 📄 Inicio.PNG
+ ┃ ┣ 📄 app.py --> Codigo python del gestor de tarea (Backend)
+ ┃ ┣ 📄 index.html --> Estructura básica de la página
+ ┃ ┣ 📄 scripts.js -->  clases y objetos en JavaScript de manera similar a como se encuentra en Python
+ ┃ ┗ 📄 styles.css --> Aspecto visual de la aplicación
 ```
 
 ###  📌 Para ejecutarlo:
+### Nota: tener instalado Python
+✅ 1. Descargar este repositorio
 
-✅ 1- Abre la terminal y ve a la carpeta del proyecto: 
+Usa el comando cd para moverte a la carpeta en tu computadora donde quieres que se descargue el repositorio:
+```
+cd C:\Users\tu_usuario\Documents\Proyectos
+# o en macOS/Linux:
+cd ~/Documents/Proyectos
+```
+Ejecuta el comando git clone: Pega la URL que copiaste después del comando:
+```
+git clone https://github.com/nombre-usuario/nombre-repositorio.git
+```
+✅ 2. Abre la terminal y ve a la carpeta del proyecto:
 ```
 cd /ruta/del/proyecto
 ```
-✅ 2-Asegúrate de tener Flask instalado: pip install flask: 
+✅ 3-Asegúrate de tener Flask instalado: pip install flask: 
 ```
 pip install flask
 ```
-✅ 3- Ejecuta el script:
+✅ 4- Ejecuta el script:
 ```
 python app.py
 ```
-✅ 4- Si ves esto, significa que Flask está corriendo correctamente:
+✅ 5- Si ves esto, significa que Flask está corriendo correctamente:
 ```
 Running on http://127.0.0.1:5000/
 ```
-✅ 5-Abre index.html en el navegador: 
+✅ 6-Abre index.html en el navegador: 
 ```
 Ahora abre (http://127.0.0.1:5500/index.html) en tu navegador y debería mostrar las tareas.
 ```
