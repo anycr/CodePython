@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fecha_vencimiento: fecha_vencimiento
         };
 
-        fetch('https://codepython-production-e1c9.up.railway.app/', {
+        fetch('https://codepython-production-e1c9.up.railway.app/tareas', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function completarTarea(id) {
-        fetch(`https://codepython-production-e1c9.up.railway.app/${id}`, {
+        fetch(`https://codepython-production-e1c9.up.railway.app/tareas/${id}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function eliminarTarea(id) {
-        fetch(`https://codepython-production-e1c9.up.railway.app/eliminar/${id}`, {
+        fetch(`https://codepython-production-e1c9.up.railway.app/tareas/eliminar/${id}`, {
             method: 'GET'
         })
         .then(response => {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function cambiarPrioridad(id) {
         const nuevaPrioridad = prompt('Ingrese la nueva prioridad (Alta, Normal, Baja):');
         if (nuevaPrioridad) {
-            fetch(`https://codepython-production-e1c9.up.railway.app/cambiar_prioridad/${id}`, {
+            fetch(`https://codepython-production-e1c9.up.railway.app/tareas/cambiar_prioridad/${id}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     
     function actualizarListaTareas() {
-        fetch('https://codepython-production-e1c9.up.railway.app/')
+        fetch('https://codepython-production-e1c9.up.railway.app/tareas')
             .then(response => response.json())
             .then(data => {
                 // Limpiar lista de tareas antes de agregar las actualizadas
